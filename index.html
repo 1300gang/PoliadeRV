@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu d'Énigme RA</title>
+    
+    <!-- MindAR -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image.prod.js"></script>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- HEADER (Caché sur splash) -->
+    <header id="main-header" class="hidden">
+        <button id="btn-menu-left">☰</button>
+        <h1>Jeu RA</h1>
+        <button id="btn-menu-right">⚙️</button>
+    </header>
+
+    <!-- TIROIR GAUCHE -->
+    <div id="drawer-left" class="drawer drawer-left">
+        <button class="close-drawer">✕</button>
+        <h2>Menu</h2>
+        <ul>
+            <li>Profil</li>
+            <li>Paramètres</li>
+            <li>Crédits</li>
+        </ul>
+    </div>
+
+    <!-- TIROIR DROIT -->
+    <div id="drawer-right" class="drawer drawer-right">
+        <button class="close-drawer">✕</button>
+        <h2>Inventaire</h2>
+        <div id="score-display">
+            <p>Progression : <span id="score-val">0</span></p>
+        </div>
+    </div>
+
+    <!-- FOND ASSOMBRISSANT -->
+    <div id="drawer-backdrop" class="hidden"></div>
+
+    <!-- ==========================================
+         ÉCRAN 1 : SPLASH (PREMIÈRE VISITE)
+         ========================================== -->
+    <div id="screen-splash" class="screen active">
+        <div class="splash-container">
+            <h1 class="game-title">Mystères en RA</h1>
+            <p class="subtitle">Une aventure immersive</p>
+            <button id="btn-start-intro" class="btn-primary">Commencer</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         ÉCRAN 2 : BD (INTRODUCTION)
+         ========================================== -->
+    <div id="screen-comic" class="screen">
+        <div class="comic-container">
+            <h2>Histoire</h2>
+            <p class="comic-text">
+                Il était une fois... [Texte de la BD]
+            </p>
+            <button id="btn-end-comic" class="btn-primary">Continuer</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         ÉCRAN 3 : TUTORIEL (LENTILLE)
+         ========================================== -->
+    <div id="screen-tuto" class="screen">
+        <div id="tuto-game-area">
+            <!-- Arrière-plan -->
+            <div id="tuto-background" class="tuto-layer"></div>
+            
+            <!-- Téléphone (Lentille mobile) -->
+            <div id="tuto-lens-container">
+                <img id="tuto-phone-frame" src="" alt="Téléphone">
+                <div id="tuto-reveal-window">
+                    <div id="tuto-solution-layer" class="tuto-layer"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tuto-controls">
+            <input type="text" id="tuto-input" placeholder="Quel mot as-tu trouvé ?">
+            <button id="btn-validate-tuto" class="btn-primary">Valider</button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         ÉCRAN 4 : HUB (CHOIX DES VILLES)
+         ========================================== -->
+    <div id="screen-hub" class="screen">
+        <div class="hub-container">
+            <!-- Image de la ville -->
+            <div class="city-image">
+                <div class="placeholder-img">Ville</div>
+            </div>
+            
+            <!-- Badge du nom -->
+            <div class="city-name-badge">
+                <span>Nom Ville</span>
+            </div>
+            
+            <!-- Navigation ville -->
+            <div class="city-navigation">
+                <button id="btn-prev-city" class="btn-nav">◀</button>
+                <button id="btn-next-city" class="btn-nav">▶</button>
+            </div>
+            
+            <!-- Actions -->
+            <div class="hub-actions">
+                <button id="btn-chat" class="btn-action">💬 Conversation</button>
+                <button id="btn-activate-ar" class="btn-action">📷 Activer RA</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         ÉCRAN 5 : RÉALITÉ AUGMENTÉE
+         ========================================== -->
+    <div id="screen-ar" class="screen">
+        <div id="ar-scene-container"></div>
+        
+        <!-- Instructions -->
+        <div class="ar-instructions">
+            <p>🎯 Pointez la caméra vers la cible</p>
+        </div>
+        
+        <!-- Affichage du mot à trous (Touch) -->
+        <div id="ar-word-display" class="hidden">_ _ _ _ _</div>
+        
+        <!-- Bouton "Ouvrir chat" (dans la RA) -->
+        <button id="btn-ar-open-chat">💬 Ouvrir la conversation</button>
+        
+        <!-- Bouton quitter (EN HAUT À DROITE) -->
+        <button id="btn-quit-ar" class="btn-quit-ar">✕</button>
+    </div>
+
+    <!-- ==========================================
+         MODAL : CHAT (CONVERSATION)
+         ========================================== -->
+    <div id="modal-chat" class="modal hidden">
+        <div class="modal-content">
+            <button id="btn-close-chat" class="btn-close-modal">✕</button>
+            <h2>Conversation</h2>
+            
+            <!-- Indicateur "en train d'écrire" -->
+            <div id="typing-indicator" class="hidden">
+                <img src="" alt="Avatar" class="typing-avatar">
+                <span>X est en train d'écrire<span class="typing-dots">...</span></span>
+            </div>
+            
+            <!-- Bouton Activer RA (dans le chat) -->
+            <button id="btn-chat-activate-ar">📷 Activer la Réalité Augmentée</button>
+            
+            <!-- Historique des messages -->
+            <div id="chat-history"></div>
+            
+            <!-- Contrôles (input ou boutons) -->
+            <div id="chat-controls"></div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         MODAL : ZOOM IMAGE
+         ========================================== -->
+    <div id="image-zoom-modal" class="modal hidden">
+        <button id="btn-close-zoom" class="btn-close-modal">✕</button>
+        <img id="zoomed-image" src="" alt="Image">
+    </div>
+
+    <!-- ==========================================
+         MODAL : DÉCOUVERTE RA
+         ========================================== -->
+    <div id="ar-modal" class="hidden">
+        <div class="ar-modal-content">
+            <p id="ar-modal-text">Message de découverte...</p>
+            <div class="ar-modal-buttons">
+                <button id="btn-ar-modal-chat">💬 Aller au chat</button>
+                <button id="btn-ar-modal-continue">🔍 Continuer l'exploration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/core.js"></script>
+    <script src="js/chat.js"></script>
+    <script src="js/ar.js"></script>
+    <script src="js/data.js"></script>
+
+</body>
+</html>

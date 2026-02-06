@@ -1,0 +1,1005 @@
+Reset basique
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body, html { width: 100%; height: 100%; overflow: hidden; font-family: sans-serif; background: #222; color: white; }
+
+/* Classes utilitaires */
+.hidden { display: none !important; }
+.btn-primary { background: #ffcc00; color: black; padding: 10px 20px; border: none; font-weight: bold; font-size: 1.2rem; cursor: pointer; }
+.icon-btn { background: none; border: none; font-size: 2rem; color: white; cursor: pointer; }
+
+/* Gestion des Écrans (SPA) */
+.screen {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #333;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.screen.active {
+    opacity: 1;
+    pointer-events: all;
+    z-index: 2;
+}
+
+/* Header (par dessus les écrans) */
+#main-header {
+    position: absolute;
+    top: 0; left: 0; width: 100%;
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    z-index: 10;
+    background: rgba(0,0,0,0.5);
+}
+
+/* Hub Principal Styles */
+.hub-footer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.btn-big-action {
+    margin-top: 20px;
+    padding: 20px 40px;
+    background: red;
+    color: white;
+    font-size: 1.5rem;
+    border: none;
+    border-radius: 50px;
+}
+
+/* === TIROIRS (DRAWERS) === */
+.drawer {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 80%; /* Prend 80% de la largeur mobile */
+    background: #1a1a1a;
+    z-index: 20;
+    transition: transform 0.3s ease;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.8);
+}
+
+/* Tiroir Gauche : caché à gauche */
+.drawer-left { left: 0; transform: translateX(-100%); }
+.drawer-left.open { transform: translateX(0); }
+
+/* Tiroir Droite : caché à droite */
+.drawer-right { right: 0; transform: translateX(100%); }
+.drawer-right.open { transform: translateX(0); }
+
+/* Fond sombre quand un menu est ouvert */
+#drawer-backdrop {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 15;
+}
+
+/* --- ÉTAPE 3 : STYLES DU TUTORIEL (INTEGRATION REINDEX) --- */
+
+/* Ajustement global de l'écran tuto pour centrer le contenu */
+#screen-tuto {
+    display: flex; /* Flexbox est déjà défini par la classe .screen, mais on s'assure */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Centre verticalement */
+    overflow: hidden; /* Empêche le scroll global */
+}
+
+.tuto-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#tuto-game-area {
+    position: relative;
+    width: 90%;
+    max-width: 600px; /* Limite la largeur sur tablette/PC */
+    height: 60vh; /* Utilise 60% de la hauteur de l'écran */
+    margin: 10px auto;
+    overflow: hidden;
+    border: 3px solid #FFCC00;
+    cursor: none; /* Cache le curseur standard sur PC */
+    touch-action: none; /* IMPORTANT : Empêche le scroll page sur mobile quand on touche le jeu */
+    background: #000;
+}
+
+#tuto-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    /* Image définie dans le JS ou ici : */
+    background-image: url('../assets/images/tuto_environnement.png');
+}
+
+/* Le conteneur qui bouge (Le téléphone complet) */
+#tuto-lens-container {
+    position: absolute;
+    width: 150px; /* Largeur du téléphone */
+    height: 250px; /* Hauteur du téléphone */
+    pointer-events: none; /* Permet de cliquer à travers (utile pour le JS) */
+    z-index: 10;
+    transform: translate(-50%, -50%); /* Centre le curseur au milieu du téléphone */
+}
+
+/* L'image cadre du téléphone (png transparent) */
+#tuto-phone-frame {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    display: block;
+}
+
+/* La fenêtre de découpe (L'écran du téléphone) */
+#tuto-reveal-window {
+    position: absolute;
+    /* CES VALEURS DÉPENDENT DE TON IMAGE phone_mask.png */
+    /* Ajuste-les si l'écran de ton téléphone n'est pas parfaitement centré */
+    top: 12%; 
+    left: 10%;
+    width: 80%;
+    height: 76%;
+    overflow: hidden; /* C'est ici que la magie opère (masque) */
+    z-index: 2;
+    background: #fff; /* Fond blanc au cas où l'image charge mal */
+}
+
+/* L'image cachée (Piment) */
+#tuto-solution-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transform-origin: top left;
+    /* Image définie dans le JS ou ici : */
+    background-image: url('../assets/images/tuto_solution.png');
+}
+
+.tuto-controls {
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#tuto-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+}
+
+/* --- ÉTAPE 4 : STYLE MESSENGER --- */
+
+#modal-chat {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #f0f0f0;
+    z-index: 1000; /* Au-dessus de tout */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.chat-header {
+    background: white;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    color: #333;
+}
+.chat-info { flex: 1; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.avatar { width: 40px; height: 40px; background: #ddd; border-radius: 50%; margin-right: 10px; background-image: url('../assets/images/avatar.png'); background-size: cover; }
+#btn-close-chat { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #333; }
+
+/* Zone Messages */
+#chat-history {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Bulles */
+.bubble {
+    max-width: 80%;
+    padding: 12px 18px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    position: relative;
+    animation: popIn 0.3s ease;
+}
+.bubble.npc {
+    align-self: flex-start;
+    background: white;
+    color: #333;
+    border-bottom-left-radius: 5px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.bubble.player {
+    align-self: flex-end;
+    background: #0084ff; /* Bleu Messenger */
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+.bubble img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+}
+
+/* Zone de Contrôle (Bas) */
+#chat-controls {
+    background: white;
+    padding: 15px;
+    min-height: 80px;
+    border-top: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Inputs & Boutons Chat */
+.btn-choice {
+    background: white;
+    border: 1px solid #0084ff;
+    color: #0084ff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-choice:active { background: #0084ff; color: white; }
+
+.puzzle-container { display: flex; width: 100%; gap: 5px; }
+.puzzle-input { flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 20px; outline: none; }
+.btn-send { background: #0084ff; color: white; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; }
+
+/* Modal Zoom Image */
+#image-zoom-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 100;
+    display: flex; align-items: center; justify-content: center;
+}
+#zoomed-image { max-width: 95%; max-height: 80%; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+#btn-close-zoom { position: absolute; top: 20px; right: 20px; color: white; background: none; border: none; font-size: 2rem; }
+
+@keyframes popIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- ÉTAPE 5 : STYLE RA --- */
+
+#screen-ar {
+    background: transparent !important; /* CRUCIAL : Laisse voir la caméra */
+    pointer-events: auto; /* Laisse passer les clics si besoin */
+    z-index: 1; /* Juste au-dessus de la vidéo */
+}
+
+#ar-overlay-ui {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; /* Laisse passer les clics vers la scène 3D */
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+#btn-quit-ar {
+    pointer-events: auto; /* Réactive le clic pour ce bouton */
+    align-self: flex-end; /* En haut à droite */
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.ar-instructions {
+    text-align: center;
+    color: white;
+    background: rgba(0,0,0,0.5);
+    padding: 10px;
+    border-radius: 20px;
+    margin-top: 50%; /* Environ au milieu */
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+#ar-scene-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+}
+
+/* La vidéo de MindAR est ajoutée automatiquement, on s'assure qu'elle ne cache pas l'UI */
+video {
+z-index: -2 !important; /* On l'envoie tout au fond */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.a-canvas {
+    z-index: 0 !important; /* Au-dessus de la vidéo (-2), mais sous l'UI (200) */
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+/* ============================================
+   STYLES COMPLETS DU JEU
+   ============================================ */
+
+/* --- INDICATEUR "EN TRAIN D'ÉCRIRE" --- */
+#typing-indicator {
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+#typing-indicator.hidden {
+    display: none;
+}
+
+.typing-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.typing-dots {
+    display: inline-block;
+    animation: typingDots 1.5s infinite;
+}
+
+@keyframes typingDots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+}
+
+/* Animation alternative pour les points */
+.typing-dots::after {
+    content: '';
+    animation: typingAnimation 1.5s infinite;
+}
+
+@keyframes typingAnimation {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75% { content: '...'; }
+    100% { content: ''; }
+}
+
+/* --- BULLES DE CHAT AVEC AVATARS --- */
+.bubble {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    align-items: flex-start;
+    animation: bubbleAppear 0.3s ease-out;
+    max-width: 100%; /* Fix scroll horizontal */
+}
+
+@keyframes bubbleAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bubble-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.bubble-content {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 12px 16px;
+    border-radius: 18px;
+    max-width: calc(100% - 60px); /* Évite le débordement */
+    word-wrap: break-word;
+    word-break: break-word; /* Force la coupure des mots longs */
+    overflow-wrap: break-word;
+    flex: 1;
+    min-width: 0; /* Important pour flexbox */
+}
+
+/* Personnalisation par personnage */
+.bubble.arron .bubble-avatar {
+    border-color: #4A90E2;
+}
+
+.bubble.arron .bubble-content {
+    background: linear-gradient(135deg, rgba(74, 144, 226, 0.2), rgba(74, 144, 226, 0.05));
+    border-left: 3px solid #4A90E2;
+}
+
+.bubble.professeur .bubble-avatar {
+    border-color: #7B68EE;
+}
+
+.bubble.professeur .bubble-content {
+    background: linear-gradient(135deg, rgba(123, 104, 238, 0.2), rgba(123, 104, 238, 0.05));
+    border-left: 3px solid #7B68EE;
+}
+
+.bubble.player {
+    flex-direction: row-reverse;
+}
+
+.bubble.player .bubble-content {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 136, 0.05));
+    border-right: 3px solid #00FF88;
+    border-left: none;
+    text-align: right;
+}
+
+/* --- MODAL DE DÉCOUVERTE RA --- */
+#ar-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+}
+
+#ar-modal.hidden {
+    display: none;
+}
+
+.ar-modal-content {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    animation: modalSlideIn 0.4s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+#ar-modal-text {
+    font-size: 18px;
+    margin-bottom: 25px;
+    line-height: 1.6;
+    color: #fff;
+}
+
+.ar-modal-buttons {
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+}
+
+.ar-modal-buttons button {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#btn-ar-modal-chat {
+    background: linear-gradient(135deg, #4A90E2, #357ABD);
+    color: white;
+}
+
+#btn-ar-modal-chat:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(74, 144, 226, 0.4);
+}
+
+#btn-ar-modal-continue {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+#btn-ar-modal-continue:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* --- BOUTON FLOTTANT RA → CHAT --- */
+#btn-ar-chat {
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4A90E2, #357ABD);
+    border: 3px solid white;
+    box-shadow: 0 5px 25px rgba(74, 144, 226, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 9999;
+    animation: floatPulse 2s ease-in-out infinite;
+}
+
+#btn-ar-chat.hidden {
+    display: none;
+}
+
+@keyframes floatPulse {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-10px) scale(1.05);
+    }
+}
+
+#btn-ar-chat:active {
+    transform: scale(0.95);
+}
+
+/* --- AFFICHAGE DU MOT À TROUS (TOUCH) --- */
+#ar-word-display {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px 30px;
+    border-radius: 15px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 10px;
+    color: #00FF88;
+    z-index: 9998;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 255, 136, 0.3);
+    box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+}
+
+#ar-word-display.hidden {
+    display: none;
+}
+
+/* --- MENU DE SÉLECTION DES LIEUX RA --- */
+.ar-location-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.ar-location-menu-content {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.ar-location-menu-content h2 {
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 24px;
+    color: #fff;
+}
+
+.ar-location-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.ar-location-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.ar-location-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateX(5px);
+}
+
+.ar-location-item.found {
+    border-color: rgba(0, 255, 136, 0.5);
+    background: rgba(0, 255, 136, 0.1);
+}
+
+.ar-location-item.found:hover {
+    border-color: rgba(0, 255, 136, 0.8);
+}
+
+.location-icon {
+    font-size: 30px;
+}
+
+.location-info {
+    flex: 1;
+}
+
+.location-info strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: #fff;
+}
+
+.location-info small {
+    color: #888;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-cancel-ar {
+    width: 100%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel-ar:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+    .ar-modal-content {
+        padding: 20px;
+        max-width: 90%;
+    }
+    
+    #ar-modal-text {
+        font-size: 16px;
+    }
+    
+    .ar-location-menu-content {
+        max-width: 90%;
+        padding: 20px;
+    }
+    
+    .ar-location-menu-content h2 {
+        font-size: 20px;
+    }
+    
+    .ar-location-item {
+        padding: 15px;
+    }
+    
+    .location-info strong {
+        font-size: 16px;
+    }
+    
+    #ar-word-display {
+        font-size: 18px;
+        padding: 10px 20px;
+        letter-spacing: 5px;
+    }
+    
+    #btn-ar-chat {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+        bottom: 80px;
+    }
+}
+
+/* --- BOUTON "ACTIVER RA" DANS LE CHAT --- */
+#btn-chat-activate-ar {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #FF6B6B, #FF5252);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+#btn-chat-activate-ar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
+}
+
+#btn-chat-activate-ar:active {
+    transform: translateY(0);
+}
+
+/* --- BOUTON QUITTER RA (EN HAUT À DROITE) --- */
+.btn-quit-ar {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: 2px solid white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.btn-quit-ar:hover {
+    background: rgba(255, 0, 0, 1);
+    transform: scale(1.1);
+}
+
+.btn-quit-ar:active {
+    transform: scale(0.95);
+}
+
+/* --- BOUTON "OUVRIR CHAT" DANS LA RA --- */
+#btn-ar-open-chat {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #4A90E2, #357ABD);
+    border: 3px solid white;
+    border-radius: 30px;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 9999 ;
+    box-shadow: 0 5px 25px rgba(74, 144, 226, 0.5);
+    animation: floatPulse 2s ease-in-out infinite;
+    pointer-events: auto; /* Active le clic */
+}
+
+#btn-ar-open-chat:active {
+    transform: translateX(-50%) scale(0.95);
+}
+.puzzle-container {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+
+.puzzle-input {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 25px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.puzzle-input:focus {
+    border-color: #4A90E2;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-send {
+    padding: 12px 24px;
+    border-radius: 25px;
+    border: none;
+    background: linear-gradient(135deg, #4A90E2, #357ABD);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-send:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.4);
+}
+
+.btn-send:active {
+    transform: translateY(0);
+}
+
+.btn-choice {
+    padding: 12px 20px;
+    border-radius: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.btn-choice:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateX(5px);
+}
+
+/* --- AMÉLIORATIONS GÉNÉRALES --- */
+#chat-history {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 15px;
+    scroll-behavior: smooth;
+}
+
+/* Scrollbar personnalisée */
+#chat-history::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chat-history::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+}
+
+#chat-history::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+}
+
+#chat-history::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* --- ANIMATIONS DE TRANSITION --- */
+.screen {
+    animation: screenTransition 0.4s ease-out;
+}
+
+@keyframes screenTransition {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* --- NOTIFICATION BADGE (Optionnel pour le chat) --- */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #FF3B30;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.7);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 10px rgba(255, 59, 48, 0);
+    }
+}

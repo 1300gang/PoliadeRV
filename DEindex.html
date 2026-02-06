@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>Jeu de Piste RA</title>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+    </head>
+<body>
+
+    <header id="main-header" class="hidden">
+        <button id="btn-menu-left" class="icon-btn">☰</button>
+        <div class="header-title">Jeu de Piste</div>
+        <button id="btn-menu-right" class="icon-btn">📖</button>
+    </header>
+
+    <main id="app-container">
+
+        <section id="screen-splash" class="screen active">
+            <div class="content-center">
+                <h1>ATTENTION</h1>
+                <p>La Réalité Augmentée présente des risques. Soyez attentif à votre environnement.</p>
+                <button id="btn-start-intro" class="btn-primary">J'ai compris</button>
+            </div>
+        </section>
+
+        <section id="screen-comic" class="screen">
+            <div class="comic-container">
+                <p>Place de la BD (Images PNG)</p>
+                <button id="btn-end-comic" class="btn-secondary">Passer au Tutoriel</button>
+            </div>
+        </section>
+
+        <section id="screen-tuto" class="screen">
+            <div class="tuto-header">
+                <h2>Tutoriel</h2>
+                <p>Glisse le téléphone pour révéler le code secret.</p>
+            </div>
+
+            <div id="tuto-game-area">
+                <div id="tuto-background"></div>
+                
+                <div id="tuto-lens-container">
+                    <img id="tuto-phone-frame" alt="Téléphone">
+                    <div id="tuto-reveal-window">
+                        <div id="tuto-solution-layer"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tuto-controls">
+                <input type="text" id="tuto-input" placeholder="Entrez le mot caché">
+                <button id="btn-validate-tuto" class="btn-primary">Valider</button>
+            </div>
+        </section>
+
+        <section id="screen-hub" class="screen">
+            <div class="city-display">
+                <div class="city-image">
+                    <div class="placeholder-img" style="width:100%; height:300px; background:#555; display:flex; align-items:center; justify-content:center;">
+                        Image Ville
+                    </div>
+                </div>
+                <div class="city-name-badge">
+                    <span>Nom du Lieu</span>
+                </div>
+                <div class="score-display">Points: <span id="score-val">0</span></div>
+                
+                <button id="btn-activate-ar" class="btn-big-action">Activer RA</button>
+            </div>
+
+            <div class="hub-footer">
+                <button id="btn-prev-city" class="nav-arrow">⬅</button>
+                <button id="btn-chat" class="btn-chat">Conversation</button>
+                <button id="btn-next-city" class="nav-arrow">➡</button>
+            </div>
+        </section>
+
+        <section id="screen-ar" class="screen">
+            <div id="ar-overlay-ui">
+                <div class="ar-instructions">
+                    <p>Pointez la caméra vers l'affiche.</p>
+                </div>
+                <button id="btn-quit-ar" class="btn-small">Quitter RA</button>
+            </div>
+            
+            <div id="ar-scene-container"></div>
+        </section>
+
+        <section id="modal-chat" class="hidden">
+            
+            <div class="chat-header">
+                <button id="btn-close-chat">✕</button>
+                <div class="chat-info">
+                    <div class="avatar"></div> <div class="contact-name">L'Informateur</div>
+                </div>
+                <div class="spacer"></div>
+            </div>
+
+            <div id="chat-history">
+                </div>
+
+            <div id="chat-controls">
+                </div>
+
+        </section>
+
+        <div id="image-zoom-modal" class="hidden">
+            <button id="btn-close-zoom">✕</button>
+            <img id="zoomed-image" src="" alt="Zoom">
+        </div>
+
+    </main>
+
+    <div id="drawer-left" class="drawer drawer-left">
+        <button class="close-drawer">✕</button>
+        <h2>Menu</h2>
+        <ul id="city-list-menu">
+            <li>Ville 1</li>
+            <li>Ville 2</li>
+        </ul>
+        <hr>
+        <div class="credits">
+            <p>Créé par : Toi</p>
+            <button id="btn-reset-save" class="btn-danger">Effacer Progression</button>
+        </div>
+    </div>
+
+    <div id="drawer-right" class="drawer drawer-right">
+        <button class="close-drawer">✕</button>
+        <h2>Histoire</h2>
+        <div id="drawer-comic-content">
+            <p>Rappel de l'histoire...</p>
+        </div>
+    </div>
+
+    <div id="drawer-backdrop" class="hidden"></div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

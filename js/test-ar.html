@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test AR - Clic sur Objets 3D</title>
+    
+    <!-- MindAR + A-Frame -->
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image.prod.js"></script>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        
+        #ar-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #debug-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 12px;
+            max-width: 300px;
+            z-index: 1000;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        #debug-panel h3 {
+            margin: 0 0 10px 0;
+            color: #00ff00;
+        }
+        
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px;
+            border-left: 2px solid #00ff00;
+            padding-left: 8px;
+        }
+        
+        .log-success { color: #00ff00; }
+        .log-error { color: #ff0000; }
+        .log-info { color: #00aaff; }
+        
+        #click-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 255, 0, 0.3);
+            color: white;
+            padding: 20px;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 1000;
+            min-width: 60px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+<div id="ar-container">
+    <!-- Debug Panel -->
+    <div id="debug-panel">
+        <h3>🔍 Debug Console</h3>
+        <div id="debug-logs"></div>
+    </div>
+    
+    <!-- Click Counter -->
+    <div id="click-counter">0</div>
+    
+    <!-- Instructions -->
+    <div id="instructions">
+        <strong>📱 Scannez n'importe quelle image</strong><br>
+        <small>Puis cliquez sur les cubes colorés qui apparaissent</small>
+    </div>
+    
+    <!-- AR Scene -->
+    <a-scene 
+        mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/hiukim/mind-ar-js@1.2.2/examples/image-tracking/assets/card-example/card.mind; filterMinCF:0.0001; filterBeta: 0.01" 
+        color-space="sRGB" 
+        renderer="colorManagement: true, physicallyCorrectLights" 
+        vr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false"
+        embedded>
+        
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+        
+        <a-entity mindar-image-target="targetIndex: 0">
+            <!-- Cube Rouge -->
+            <a-box 
+                id="cube-red"
+                position="-0.5 0.5 0" 
+                scale="0.3 0.3 0.3" 
+                color="#FF0000"
+                class="clickable"
+                data-cube-id="1">
+            </a-box>
+            
+            <!-- Cube Vert -->
+            <a-box 
+                id="cube-green"
+                position="0 0.5 0" 
+                scale="0.3 0.3 0.3" 
+                color="#00FF00"
+                class="clickable"
+                data-cube-id="2">
+            </a-box>
+            
+            <!-- Cube Bleu -->
+            <a-box 
+                id="cube-blue"
+                position="0.5 0.5 0" 
+                scale="0.3 0.3 0.3" 
+                color="#0000FF"
+                class="clickable"
+                data-cube-id="3">
+            </a-box>
+            
+            <!-- Texte indicatif -->
+            <a-text 
+                value="Cliquez sur les cubes !" 
+                position="0 0 0" 
+                scale="0.5 0.5 0.5" 
+                color="#FFFFFF" 
+                align="center">
+            </a-text>
+        </a-entity>
+        
+        <a-light type="ambient" intensity="1"></a-light>
+        <a-light type="directional" position="1 1 1" intensity="1"></a-light>
+    </a-scene>
+</div>
+
+<script>
+    // ========================================
+    // DEBUG SYSTEM
+    // ========================================
+    
+    const debugLogs = document.getElementById('debug-logs');
+    const clickCounter = document.getElementById('click-counter');
+    let clickCount = 0;
+    
+    function log(message, type = 'info') {
+        console.log(message);
+        const entry = document.createElement('div');
+        entry.className = `log-entry log-${type}`;
+        entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+        debugLogs.appendChild(entry);
+        debugLogs.scrollTop = debugLogs.scrollHeight;
+    }
+    
+    function incrementCounter() {
+        clickCount++;
+        clickCounter.textContent = clickCount;
+        clickCounter.style.background = 'rgba(0, 255, 0, 0.8)';
+        setTimeout(() => {
+            clickCounter.style.background = 'rgba(0, 255, 0, 0.3)';
+        }, 300);
+    }
+    
+    // ========================================
+    // WAIT FOR SCENE LOAD
+    // ========================================
+    
+    const sceneEl = document.querySelector('a-scene');
+    
+    if (sceneEl.hasLoaded) {
+        init();
+    } else {
+        sceneEl.addEventListener('loaded', init);
+    }
+    
+    function init() {
+        log('✅ Scène A-Frame chargée', 'success');
+        
+        // ========================================
+        // MÉTHODE 1 : RAYCASTING MANUEL (THREE.JS)
+        // ========================================
+        
+        const camera = document.querySelector('a-camera');
+        const canvas = sceneEl.canvas;
+        
+        log('🎮 Configuration du raycasting manuel...', 'info');
+        
+        canvas.addEventListener('click', (event) => {
+            log('🖱️ CLIC détecté sur canvas !', 'info');
+            
+            // Coordonnées normalisées
+            const rect = canvas.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            
+            log(`📍 Position: (${x.toFixed(2)}, ${y.toFixed(2)})`, 'info');
+            
+            // Raycaster THREE.js
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2(x, y);
+            
+            const cameraObj = camera.object3D.children[0] || camera.object3D;
+            raycaster.setFromCamera(mouse, cameraObj);
+            
+            // Collecter tous les cubes
+            const clickableObjects = [];
+            const cubes = ['cube-red', 'cube-green', 'cube-blue'];
+            
+            cubes.forEach(cubeId => {
+                const cube = document.getElementById(cubeId);
+                if (cube && cube.object3D) {
+                    cube.object3D.traverse((node) => {
+                        if (node.isMesh) {
+                            node.userData.cubeId = cubeId;
+                            clickableObjects.push(node);
+                        }
+                    });
+                }
+            });
+            
+            log(`🎯 ${clickableObjects.length} objets testés`, 'info');
+            
+            // Test d'intersection
+            const intersects = raycaster.intersectObjects(clickableObjects, false);
+            
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+                const cubeId = hit.userData.cubeId;
+                log(`✅ INTERSECTION ! Cube: ${cubeId}`, 'success');
+                incrementCounter();
+                
+                // Animation visuelle
+                const cube = document.getElementById(cubeId);
+                const originalScale = cube.getAttribute('scale');
+                cube.setAttribute('scale', '0.5 0.5 0.5');
+                setTimeout(() => {
+                    cube.setAttribute('scale', originalScale);
+                }, 200);
+                
+            } else {
+                log('❌ Aucune intersection détectée', 'error');
+            }
+        });
+        
+        // ========================================
+        // MÉTHODE 2 : ÉVÉNEMENTS A-FRAME (fallback)
+        // ========================================
+        
+        const cubes = ['cube-red', 'cube-green', 'cube-blue'];
+        cubes.forEach(cubeId => {
+            const cube = document.getElementById(cubeId);
+            if (cube) {
+                // Multiples listeners
+                ['click', 'mousedown', 'touchstart'].forEach(eventType => {
+                    cube.addEventListener(eventType, (evt) => {
+                        log(`🎉 Événement ${eventType} sur ${cubeId}`, 'success');
+                        incrementCounter();
+                        evt.stopPropagation();
+                    });
+                });
+            }
+        });
+        
+        log('✅ Tous les listeners configurés', 'success');
+        
+        // ========================================
+        // TARGET DETECTION
+        // ========================================
+        
+        const target = document.querySelector('[mindar-image-target]');
+        if (target) {
+            target.addEventListener('targetFound', () => {
+                log('🎯 TARGET TROUVÉE !', 'success');
+            });
+            
+            target.addEventListener('targetLost', () => {
+                log('⚠️ Target perdue', 'error');
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
