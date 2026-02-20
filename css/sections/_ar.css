@@ -1,0 +1,117 @@
+/* =============================
+   RÉALITÉ AUGMENTÉE (AR)
+   ============================= */
+#screen-ar {
+    background: transparent !important;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+#ar-scene-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+}
+
+video {
+    z-index: -2 !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.a-canvas {
+    z-index: 0 !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+.ar-instructions {
+    text-align: center;
+    color: white;
+    background: rgba(0,0,0,0.5);
+    padding: 10px;
+    border-radius: 20px;
+    margin-top: 50%;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+#ar-word-display {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px 30px;
+    border-radius: 15px;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 10px;
+    color: #00FF88;
+    z-index: 9998;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 255, 136, 0.3);
+    box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+}
+
+#ar-word-display.hidden {
+    display: none;
+}
+
+#btn-ar-open-chat {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #4A90E2, #357ABD);
+    border: 3px solid white;
+    border-radius: 30px;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 9999 ;
+    box-shadow: 0 5px 25px rgba(74, 144, 226, 0.5);
+    animation: floatPulse 2s ease-in-out infinite;
+    pointer-events: auto;
+}
+
+#btn-ar-open-chat:active {
+    transform: translateX(-50%) scale(0.95);
+}
+
+.btn-quit-ar {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: 2px solid white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+.btn-quit-ar:hover {
+    background: rgba(255, 0, 0, 1);
+    transform: scale(1.1);
+}
+
+.btn-quit-ar:active {
+    transform: scale(0.95);
+}

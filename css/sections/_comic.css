@@ -1,0 +1,102 @@
+/* =============================
+   BD (INTRODUCTION)
+   ============================= */
+#screen-comic {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 20px;
+    background: var(--background-dark);
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+}
+
+.comic-content-wrapper {
+    width: 95%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding-bottom: 20px;
+}
+
+.comic-block {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 500px;
+    scroll-snap-align: start;
+    background: #333;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.comic-image-wrapper {
+    width: 100%;
+    padding-top: 100%;
+    position: relative;
+    background: #1a1a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.comic-image-wrapper img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.comic-text-description {
+    padding: 15px;
+    font-size: 0.95em;
+    line-height: 1.5;
+    color: #eee;
+    text-align: left;
+}
+
+#screen-comic .btn-primary {
+    margin-top: 30px;
+    padding: 15px 40px;
+    font-size: 1.3em;
+    margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+    .comic-block {
+        max-width: 600px;
+    }
+}
+
+.comic-content-wrapper.comic-in-drawer {
+    padding: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.comic-content-wrapper.comic-in-drawer .comic-block {
+    max-width: 100%;
+    margin-bottom: 15px;
+}
+
+.comic-content-wrapper.comic-in-drawer .comic-image-wrapper img {
+    max-height: 150px;
+    width: auto;
+    object-fit: contain;
+}
+
+.comic-content-wrapper.comic-in-drawer .comic-text-description {
+    font-size: 0.85em;
+    padding: 10px;
+}
