@@ -1,0 +1,93 @@
+/* =============================
+   TUTORIEL (LENTILLE)
+   ============================= */
+#screen-tuto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.tuto-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#tuto-game-area {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    height: 60vh;
+    margin: 10px auto;
+    overflow: hidden;
+    border: 3px solid var(--primary-color);
+    cursor: none;
+    touch-action: none;
+    background: #000;
+}
+
+#tuto-background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-image: url('../assets/images/tuto_environnement.png');
+}
+
+#tuto-lens-container {
+    position: absolute;
+    width: 150px;
+    height: 250px;
+    pointer-events: none;
+    z-index: 10;
+    transform: translate(-50%, -50%);
+}
+
+#tuto-phone-frame {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    display: block;
+}
+
+#tuto-reveal-window {
+    position: absolute;
+    top: 12%; 
+    left: 10%;
+    width: 80%;
+    height: 76%;
+    overflow: hidden;
+    z-index: 2;
+    background: #fff;
+}
+
+#tuto-solution-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transform-origin: top left;
+    background-image: url('../assets/images/tuto_solution.png');
+}
+
+.tuto-controls {
+    width: 90%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#tuto-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+}

@@ -12,6 +12,8 @@ let gameState = {
     collectedLetters: {}
 };
 
+let previousScreen = 'screen-hub'; // ✅ Tracking de l'écran précédent
+
 // --- SAUVEGARDE / CHARGEMENT ---
 function saveGame() {
     localStorage.setItem('myGameSave', JSON.stringify(gameState));
@@ -24,12 +26,14 @@ function loadGame() {
         gameState = JSON.parse(saved);
         console.log("📂 Jeu chargé", gameState);
         
+        // ✅ CORRECTION : Toujours vérifier si le tutoriel est complété
         if (gameState.hasCompletedTutorial) {
             loadCity(gameState.currentCityIndex);
             showScreen('screen-hub');
             return;
         }
     }
+    // Si pas de sauvegarde ou tutoriel non complété
     showScreen('screen-splash');
 }
 
@@ -44,10 +48,19 @@ function showScreen(screenId) {
         return;
     }
     
+    // Sauvegarder l'écran actuel avant de changer
+    const currentScreen = document.querySelector('.screen.active');
+    if (currentScreen && currentScreen.id !== 'modal-chat') {
+        previousScreen = currentScreen.id;
+    }
+    
     document.querySelectorAll('.screen').forEach(s => {
         s.classList.remove('active');
+        s.classList.add('hidden');
     });
     screen.classList.add('active');
+    screen.classList.remove('hidden');
+    scrollToTopOnScreenChange(); // ✅ Appeler pour défiler en haut
 
     const mainHeader = document.getElementById('main-header');
     if (mainHeader) {
@@ -71,7 +84,38 @@ document.getElementById('btn-start-intro').addEventListener('click', () => {
 });
 
 document.getElementById('btn-end-comic').addEventListener('click', () => {
-    showScreen('screen-tuto');
+    // Circuit SPA : Splash -> Comic -> Tuto -> Hub -> AR
+    if (!gameState.hasCompletedTutorial) {
+        showScreen('screen-tuto');
+    } else {
+        showScreen('screen-hub');
+    }
+});
+
+// Ajout navigation Hub -> AR
+document.getElementById('btn-activate-ar').addEventListener('click', () => {
+    showScreen('screen-ar');
+});
+
+// Ajout navigation AR -> Hub (bouton quitter)
+document.getElementById('btn-quit-ar').addEventListener('click', () => {
+    showScreen('screen-hub');
+});
+
+// Ajout navigation Hub -> Chat
+document.getElementById('btn-chat').addEventListener('click', () => {
+    document.getElementById('modal-chat').classList.remove('hidden');
+});
+
+// Ajout fermeture du chat
+document.getElementById('btn-close-chat').addEventListener('click', () => {
+    document.getElementById('modal-chat').classList.add('hidden');
+});
+
+// Ajout bouton pour fermer le tiroir droit
+document.getElementById('btn-close-drawer-right').addEventListener('click', () => {
+    document.getElementById('drawer-right').classList.remove('open');
+    document.getElementById('drawer-backdrop').classList.add('hidden');
 });
 
 // ==========================================
@@ -89,6 +133,8 @@ function closeAllDrawers() {
 }
 
 document.getElementById('btn-menu-left').addEventListener('click', () => {
+    // ✅ NOUVEAU : Générer dynamiquement le menu des villes
+    generateCityMenu();
     leftDrawer.classList.add('open');
     backdrop.classList.remove('hidden');
 });
@@ -102,6 +148,89 @@ document.querySelectorAll('.close-drawer').forEach(btn => {
     btn.addEventListener('click', closeAllDrawers);
 });
 backdrop.addEventListener('click', closeAllDrawers);
+
+// ✅ NOUVEAU : Générer le menu de navigation des villes
+function generateCityMenu() {
+    const menuList = leftDrawer.querySelector('ul');
+    if (!menuList) return;
+    
+    // Vider le menu actuel
+    menuList.innerHTML = '';
+    
+    // Ajouter les options de menu classiques
+    const profileLi = document.createElement('li');
+    profileLi.innerText = 'Profil';
+    profileLi.onclick = () => {
+        alert('Fonctionnalité Profil à venir');
+        closeAllDrawers();
+    };
+    menuList.appendChild(profileLi);
+    
+    const settingsLi = document.createElement('li');
+    settingsLi.innerText = 'Paramètres';
+    settingsLi.onclick = () => {
+        alert('Fonctionnalité Paramètres à venir');
+        closeAllDrawers();
+    };
+    menuList.appendChild(settingsLi);
+    
+    // Séparateur
+    const separatorLi = document.createElement('li');
+    separatorLi.innerHTML = '<hr style="border: 1px solid #ccc; margin: 10px 0;">';
+    menuList.appendChild(separatorLi);
+    
+    // Titre section villes
+    const citiesTitleLi = document.createElement('li');
+    citiesTitleLi.innerHTML = '<strong>🏙️ Villes disponibles</strong>';
+    citiesTitleLi.style.cursor = 'default';
+    menuList.appendChild(citiesTitleLi);
+    
+    // Ajouter toutes les villes
+    if (gameData && gameData.cities) {
+        gameData.cities.forEach((city, index) => {
+            const cityLi = document.createElement('li');
+            
+            // Indicateur si c'est la ville actuelle
+            const isCurrent = index === gameState.currentCityIndex;
+            const indicator = isCurrent ? '➤ ' : '';
+            
+            // Indicateur si la ville est complétée
+            const isComplete = gameState.flags[`city_${city.id}_complete`];
+            const statusIcon = isComplete ? ' ✅' : '';
+            
+            cityLi.innerText = `${indicator}${city.name}${statusIcon}`;
+            cityLi.style.cursor = 'pointer';
+            cityLi.style.paddingLeft = '20px';
+            
+            if (isCurrent) {
+                cityLi.style.fontWeight = 'bold';
+                cityLi.style.color = '#007bff';
+            }
+            
+            cityLi.onclick = () => {
+                loadCity(index);
+                closeAllDrawers();
+                showScreen('screen-hub');
+            };
+            
+            menuList.appendChild(cityLi);
+        });
+    }
+    
+    // Séparateur
+    const separator2Li = document.createElement('li');
+    separator2Li.innerHTML = '<hr style="border: 1px solid #ccc; margin: 10px 0;">';
+    menuList.appendChild(separator2Li);
+    
+    // Crédits
+    const creditsLi = document.createElement('li');
+    creditsLi.innerText = 'Crédits';
+    creditsLi.onclick = () => {
+        alert('Fonctionnalité Crédits à venir');
+        closeAllDrawers();
+    };
+    menuList.appendChild(creditsLi);
+}
 
 // ==========================================
 // LOGIQUE DU JEU - CHARGEMENT VILLE
@@ -204,12 +333,15 @@ btnValidateTuto.addEventListener('click', () => {
     const userInput = tutoInput.value.trim().toUpperCase();
 
     if (userInput === TUTORIAL_ANSWER) {
+        // ✅ CORRECTION : Marquer définitivement le tutoriel comme complété
         gameState.hasCompletedTutorial = true;
         saveGame();
         
         tutoInput.value = '';
         loadCity(0);
         showScreen('screen-hub');
+        
+        console.log("✅ Tutoriel complété et sauvegardé définitivement");
     } else {
         alert("Ce n'est pas ça. Cherchez encore avec le téléphone !");
         tutoInput.value = '';
@@ -221,3 +353,19 @@ btnValidateTuto.addEventListener('click', () => {
 // ==========================================
 
 loadGame();
+
+// --- GESTION DU DÉFILEMENT ---
+function scrollToTopOnScreenChange() {
+    const activeScreen = document.querySelector('.screen.active');
+    if (activeScreen) {
+        activeScreen.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    } else {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+}

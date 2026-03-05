@@ -1,0 +1,71 @@
+/* =============================
+   ROOTS, COULEURS, TYPO, DIMENSIONS
+   ============================= */
+
+
+
+
+@font-face {
+  font-family: "normal";
+  src: url("../assets/font/BlenderPro-ThinItalic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "poliade";
+  src: url("../assets/font/Poliade.otf") format("opentype");
+}
+@font-face {
+  font-family: "enigme";
+  src: url("../assets/font/Dirtypoliade-Regular.otf") format("opentype");
+}
+:root {
+    --Beige-Fond-color: #F5DECD;
+    --Bleu-color: #87C7EE;
+    --Or-color: #F1B864;
+    --background-dark: #F5DECD;
+    --Gris-light: #DE7D7B;
+    --header-height: 60px;
+    --border-radius: 15px;
+    --font-main: 'normal';
+    --font-titre: 'poliade';
+    --font-enigme: 'enigme';
+}
+
+body, html {
+    width: 100vw;
+    height: 100dvh;
+    font-family: var(--font-main);
+    background: var(--background-dark);
+    color: white;
+    overflow-x: hidden;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.hidden { display: none !important; }
+
+.btn-primary {
+    background: var(--Or-color);
+    color: var(--Gris-light);
+    font-family: var(--font-titre);
+    text-transform : uppercase;
+    padding: 10px 20px;
+    border: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+}
+h1, h2, h3 {
+    font-family: var(--font-titre);
+    color: var(--Gris-light);
+    text-transform: uppercase;
+    /* text-shadow: 2px 2px 4px rgba(0,0,0,0.3); */
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+}

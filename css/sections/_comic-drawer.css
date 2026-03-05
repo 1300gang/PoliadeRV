@@ -1,0 +1,26 @@
+/* =============================
+   BD DANS TIROIR (COMIC IN DRAWER)
+   ============================= */
+.comic-content-wrapper.comic-in-drawer {
+    padding: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 20px;
+    max-height: 50vh;
+    overflow-y: auto;
+}
+
+.comic-content-wrapper.comic-in-drawer .comic-block {
+    max-width: 100%;
+    margin-bottom: 15px;
+}
+
+.comic-content-wrapper.comic-in-drawer .comic-image-wrapper img {
+    max-height: 150px;
+    width: auto;
+    object-fit: contain;
+}
+
+.comic-content-wrapper.comic-in-drawer .comic-text-description {
+    font-size: 0.85em;
+    padding: 10px;
+}

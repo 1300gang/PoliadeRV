@@ -10,8 +10,20 @@
     <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     
-    <!-- Styles -->
-    <link rel="stylesheet" href="css/style.css">
+    <!-- Styles découpés -->
+    <link rel="stylesheet" href="css/sections/_root.css">
+    <link rel="stylesheet" href="css/sections/_utilities.css">
+    <link rel="stylesheet" href="css/sections/_animations.css">
+    <link rel="stylesheet" href="css/sections/_responsive.css">
+    <link rel="stylesheet" href="css/sections/_header.css">
+    <link rel="stylesheet" href="css/sections/_drawer.css">
+    <link rel="stylesheet" href="css/sections/_modal-chat.css">
+    <link rel="stylesheet" href="css/sections/_tuto.css">
+    <link rel="stylesheet" href="css/sections/_comic.css">
+    <link rel="stylesheet" href="css/sections/_comic-drawer.css">
+    <link rel="stylesheet" href="css/sections/_hub.css">
+    <link rel="stylesheet" href="css/sections/_ar.css">
+    <link rel="stylesheet" href="css/sections/_splash.css">
 </head>
 <body>
 
@@ -34,45 +46,148 @@
     </div>
 
     <!-- TIROIR DROIT -->
-    <div id="drawer-right" class="drawer drawer-right">
-        <button class="close-drawer">✕</button>
+    <div id="drawer-right" class="drawer drawer-right hidden">
+        <button class="close-drawer" id="btn-close-drawer-right">✕</button>
         <h2>Inventaire</h2>
         <div id="score-display">
             <p>Progression : <span id="score-val">0</span></p>
+        </div>
+        <div class="comic-content-wrapper comic-in-drawer">
+            <!-- Les 6 blocs de la BD -->
+            <div class="comic-block active" data-step="1">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step1.png" alt="Étape 1 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 1. Ici, l'histoire commence avec l'introduction des personnages et du contexte.</p>
+                </div>
+            </div>
+            <div class="comic-block" data-step="2">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step2.png" alt="Étape 2 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 2. Le mystère s'épaissit, un premier indice est révélé.</p>
+                </div>
+            </div>
+            <div class="comic-block" data-step="3">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step3.png" alt="Étape 3 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 3. Nos héros rencontrent un obstacle inattendu.</p>
+                </div>
+            </div>
+            <div class="comic-block" data-step="4">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step4.png" alt="Étape 4 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 4. Une découverte cruciale les met sur la bonne voie.</p>
+                </div>
+            </div>
+            <div class="comic-block" data-step="5">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step5.png" alt="Étape 5 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 5. La tension monte, la solution est proche.</p>
+                </div>
+            </div>
+            <div class="comic-block" data-step="6">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step6.png" alt="Étape 6 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 6. La dernière énigme est révélée, l'aventure continue en RA !</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- FOND ASSOMBRISSANT -->
     <div id="drawer-backdrop" class="hidden"></div>
 
-    <!-- ==========================================
-         ÉCRAN 1 : SPLASH (PREMIÈRE VISITE)
-         ========================================== -->
-    <div id="screen-splash" class="screen active">
+        <!-- ==========================================
+            ÉCRAN 1 : SPLASH (PREMIÈRE VISITE)
+            ========================================== -->
+        <div id="screen-splash" class="screen active">
         <div class="splash-container">
-            <h1 class="game-title">Mystères en RA</h1>
-            <p class="subtitle">Une aventure immersive</p>
-            <button id="btn-start-intro" class="btn-primary">Commencer</button>
+            <div class="app-logo">
+                <!-- Emplacement pour le logo de l'application -->
+                <img src="assets/images/logo-placeholder.png" alt="Logo de l'application">
+            </div>
+            <div class="info-message">
+                <!-- Message d'information et texte de prévention -->
+                <p>Bienvenue dans Mystères en RA ! Explorez le monde réel avec votre téléphone pour résoudre des énigmes en réalité augmentée.</p>
+                <p class="prevention-text">Attention : Soyez conscient de votre environnement lorsque vous jouez. Ne mettez pas votre sécurité en danger.</p>
+            </div>
+            <button id="btn-start-intro" class="btn-primary">Continuer</button>
         </div>
     </div>
 
-    <!-- ==========================================
-         ÉCRAN 2 : BD (INTRODUCTION)
-         ========================================== -->
-    <div id="screen-comic" class="screen">
-        <div class="comic-container">
-            <h2>Histoire</h2>
-            <p class="comic-text">
-                Il était une fois... [Texte de la BD]
-            </p>
-            <button id="btn-end-comic" class="btn-primary">Continuer</button>
+        <!-- ==========================================
+            ÉCRAN 2 : BD (INTRODUCTION)
+            ========================================== -->
+        <div id="screen-comic" class="screen hidden">
+        <div class="comic-content-wrapper">
+            <!-- Les 6 blocs de la BD -->
+            <div class="comic-block active" data-step="1">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step1.png" alt="Étape 1 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 1. Ici, l'histoire commence avec l'introduction des personnages et du contexte.</p>
+                </div>
+            </div>
+            <div class="comic-block" data-step="2">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step2.png" alt="Étape 2 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 2. Le mystère s'épaissit, un premier indice est révélé.</p>
+                </div>
+            </div>
+            <div class="comic-block" data-step="3">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step3.png" alt="Étape 3 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 3. Nos héros rencontrent un obstacle inattendu.</p>
+                </div>
+            </div>
+            <div class="comic-block" data-step="4">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step4.png" alt="Étape 4 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 4. Une découverte cruciale les met sur la bonne voie.</p>
+                </div>
+            </div>
+            <div class="comic-block" data-step="5">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step5.png" alt="Étape 5 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 5. La tension monte, la solution est proche.</p>
+                </div>
+            </div>
+            <div class="comic-block" data-step="6">
+                <div class="comic-image-wrapper">
+                    <img src="assets/images/comic_step6.png" alt="Étape 6 de la BD">
+                </div>
+                <div class="comic-text-description">
+                    <p>Texte descriptif de l'image de l'étape 6. La dernière énigme est révélée, l'aventure continue en RA !</p>
+                </div>
+            </div>
         </div>
+        <button id="btn-end-comic" class="btn-primary">Continuer</button>
     </div>
 
-    <!-- ==========================================
-         ÉCRAN 3 : TUTORIEL (LENTILLE)
-         ========================================== -->
-    <div id="screen-tuto" class="screen">
+        <!-- ==========================================
+            ÉCRAN 3 : TUTORIEL (LENTILLE)
+            ========================================== -->
+        <div id="screen-tuto" class="screen hidden">
         <div id="tuto-game-area">
             <!-- Arrière-plan -->
             <div id="tuto-background" class="tuto-layer"></div>
@@ -92,39 +207,45 @@
         </div>
     </div>
 
-    <!-- ==========================================
-         ÉCRAN 4 : HUB (CHOIX DES VILLES)
-         ========================================== -->
-    <div id="screen-hub" class="screen">
+        <!-- ==========================================
+            ÉCRAN 4 : HUB (CHOIX DES VILLES)
+            ========================================== -->
+        <div id="screen-hub" class="screen hidden">
         <div class="hub-container">
             <!-- Image de la ville -->
-            <div class="city-image">
-                <div class="placeholder-img">Ville</div>
+            <div class="city-card">
+                <div class="city-image">
+                    <div class="placeholder-img">Ville</div>
+                </div>
             </div>
             
             <!-- Badge du nom -->
             <div class="city-name-badge">
-                <span>Nom Ville</span>
-            </div>
-            
-            <!-- Navigation ville -->
-            <div class="city-navigation">
-                <button id="btn-prev-city" class="btn-nav">◀</button>
-                <button id="btn-next-city" class="btn-nav">▶</button>
+                <span id="hub-city-name">Nom Ville</span>
             </div>
             
             <!-- Actions -->
-            <div class="hub-actions">
-                <button id="btn-chat" class="btn-action">💬 Conversation</button>
-                <button id="btn-activate-ar" class="btn-action">📷 Activer RA</button>
+            <div class="hub-main-actions">
+                <button id="btn-activate-ar" class="btn-action-primary">📷 ACTIVER RA</button>
+            </div>
+
+            <!-- Navigation ville (Flèches sur les côtés) -->
+            <div class="city-navigation">
+                <button id="btn-prev-city" class="btn-nav-side">←</button>
+                <button id="btn-next-city" class="btn-nav-side">→</button>
+            </div>
+            
+            <!-- Footer Action -->
+            <div class="hub-footer-action">
+                <button id="btn-chat" class="btn-action-footer">💬 CONVERSATION</button>
             </div>
         </div>
     </div>
 
-    <!-- ==========================================
-         ÉCRAN 5 : RÉALITÉ AUGMENTÉE
-         ========================================== -->
-    <div id="screen-ar" class="screen">
+        <!-- ==========================================
+            ÉCRAN 5 : RÉALITÉ AUGMENTÉE
+            ========================================== -->
+        <div id="screen-ar" class="screen hidden">
         <div id="ar-scene-container"></div>
         
         <!-- Instructions -->
@@ -143,27 +264,46 @@
     </div>
 
     <!-- ==========================================
-         MODAL : CHAT (CONVERSATION)
+         MODAL : CHAT (CONVERSATION) - MOBILE FIRST
          ========================================== -->
-    <div id="modal-chat" class="modal hidden">
-        <div class="modal-content">
-            <button id="btn-close-chat" class="btn-close-modal">✕</button>
-            <h2>Conversation</h2>
-            
-            <!-- Indicateur "en train d'écrire" -->
-            <div id="typing-indicator" class="hidden">
-                <img src="" alt="Avatar" class="typing-avatar">
-                <span>X est en train d'écrire<span class="typing-dots">...</span></span>
+    <div id="modal-chat" class="modal-chat-mobile hidden">
+        <div class="chat-mobile-wrapper">
+            <!-- Header compact -->
+            <div class="chat-mobile-header">
+                <button id="btn-close-chat" class="chat-close-btn">✕</button>
+                <span id="chat-city-name" class="chat-city-name">Nom de la Ville</span>
             </div>
-            
-            <!-- Bouton Activer RA (dans le chat) -->
-            <button id="btn-chat-activate-ar">📷 Activer la Réalité Augmentée</button>
-            
-            <!-- Historique des messages -->
-            <div id="chat-history"></div>
-            
-            <!-- Contrôles (input ou boutons) -->
-            <div id="chat-controls"></div>
+            <!-- Messages -->
+            <div id="chat-history" class="chat-mobile-history">
+                <!-- Exemple de message -->
+                <div class="chat-message">
+                    <div class="chat-avatar">⍥</div>
+                    <div class="chat-bubble">
+                        <div class="chat-bubble-text">Texte image de la conversation</div>
+                    </div>
+                </div>
+                <div class="chat-message">
+                    <div class="chat-avatar">⍥</div>
+                    <div class="chat-bubble">
+                        <div class="chat-bubble-text">xte de la conv</div>
+                    </div>
+                </div>
+                <div class="chat-message chat-message-reponse">
+                    <div class="chat-bubble chat-bubble-reponse">
+                        <div class="chat-bubble-text">Réponse</div>
+                    </div>
+                    <div class="chat-avatar">⍥</div>
+                </div>
+            </div>
+            <!-- Typing indicator -->
+            <div id="typing-indicator" class="chat-mobile-typing hidden">
+                <span id="typing-text">Quelqu'un est en train d'écrire</span><span class="typing-dots">...</span>
+            </div>
+            <!-- Input et bouton RA ancrés en bas -->
+            <div class="chat-mobile-footer">
+                <input type="text" id="chat-input" class="chat-input-mobile" placeholder="Écrire un message...">
+                <button id="btn-chat-activate-ar" class="chat-btn-ra">📷 ACTIVER LA RÉALITÉ AUGMENTÉE</button>
+            </div>
         </div>
     </div>
 

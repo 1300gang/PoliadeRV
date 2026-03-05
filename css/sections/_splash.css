@@ -1,0 +1,40 @@
+/* =============================
+   SPLASH (PREMIÈRE VISITE)
+   ============================= */
+.splash-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.app-logo {
+    margin-bottom: 30px;
+}
+
+.app-logo img {
+    max-width: 150px;
+    height: auto;
+}
+
+.info-message {
+    margin-bottom: 40px;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.info-message .prevention-text {
+    font-size: 0.9em;
+    color: #e44d26;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.splash-container .btn-primary {
+    padding: 12px 30px;
+    font-size: 1.2em;
+}
